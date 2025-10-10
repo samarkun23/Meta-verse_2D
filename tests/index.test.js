@@ -388,7 +388,38 @@ describe("Space information", () => {
     expect(deleteRespose.statusCode).toBe(400);
   })
 
+
+
   //get my existing spaces
+
+  test("Admin has no spaces initially", async () => {
+    const response = await axios.get(`${BACKEND_URL}/api/v1/space/all`, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+  });
+    expect(response.data.spaces.length).toBe(0);
+  })
+
+  test("Admin has no spaces initially", async () => {
+    const spaceCreateResponse = await axios.post(`${BACKEND_URL}/api/v1/space/all`, {
+      "name": "Test",
+      "dimensions": "100x200",
+    }, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    });
+
+    const response = await axios.get(`${BACKEND_URL}/api/v1/space/all`,{
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    });
+    const filteredSpace = response.data.spaces.find(x => x.id == spaceCreateResponse.spaceId)
+    expect(response.data.spaces.length).toBe(0);
+    expect(filteredSpace.id).toBeDefined();
+  })
 })
 
 
