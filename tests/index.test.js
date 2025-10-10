@@ -199,7 +199,9 @@ describe("Space information", () => {
   let mapId;
   let element1Id;
   let element2Id;
-  let token;
+  let adminToken;
+  let adminId;
+  let userToken;
   let userId;
 
   beforeAll(async () => {
@@ -212,14 +214,34 @@ describe("Space information", () => {
       type: 'admin'
     });
 
-    userId = signupResponse.data.userId;
+    adminId = signupResponse.data.userId;
 
     const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
       username,
       password
     })
 
-    token = response.data.token;
+    adminToken = response.data.token;
+
+    // user signin and singup
+    const usersignupResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+      username,
+      password,
+      type: 'admin'
+    });
+
+
+    userId = usersignupResponse.data.userId;
+
+    const userSignInResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+      username,
+      password
+    })
+
+    userToken = userSignInResponse.data.token;
+
+
+    //creating the element
 
     const element1 = await axios.post(`${BACKEND_URL}/api/v1/admin/element`, {
       "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
@@ -229,7 +251,7 @@ describe("Space information", () => {
 
     }, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${adminToken}`
       }
     })
 
@@ -241,7 +263,7 @@ describe("Space information", () => {
 
     }, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${adminToken}`
       }
     })
 
@@ -268,12 +290,105 @@ describe("Space information", () => {
       }]
     }, {
       headers: {
-        authorization: `Bearer ${token}`
+        authorization: `Bearer ${adminToken}`
       }
     })
     mapId = map.id
 
   });
+
+  test("User able to create a space", async () => {
+    const response = await axios.post(`${BACKEND_URL}/api/v1/space`, {
+      "name": "Test",
+      "dimensions": "100x200",
+      "mapId": mapId
+    }, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    })
+
+    expect(response.spaceId).toBeDefined()
+  })
+
+  test("User is able to create a space without mapId (empty space)", async () => {
+    const response = await axios.post(`${BACKEND_URL}/api/v1/space`, {
+      "name": "Test",
+      "dimenstions": "100x200"
+    }, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    }
+    )
+
+    expect(response.spaceId).toBeDefined()
+  })
+
+  test(`User is not able to create a space without mapId and dimensions`, async () => {
+    const response = await axios.post(`${BACKEND_URL}/api/v1/space`, {
+      "name": "test",
+    }, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    }
+    )
+
+    expect(response.statusCode).toBe(400)
+
+  })
+
+  //delete the sapace 
+  test("User delete the space that doesnt exist", async () => {
+    const response = await axios.delete(`${BACKEND_URL}/api/v1/space/randomIdDoesntExist`, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    })
+
+    expect(response.statusCode).toBe(400);
+  })
+
+  test("User is able to delete a space that does exist ", async () => {
+    const response = await axios.post(`${BACKEND_URL}/api/v1/space`, {
+      "name": "Test",
+      "dimensions": "100x200",
+    }, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    })
+
+    const deleteRespose = await axios.delete(`${BACKEND_URL}/api/v1/space/${response.data.spaceId}`, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    })
+
+    expect(deleteRespose.statusCode).toBe(200);
+  })
+
+  test("User is not able to delete a space created by another user", async () => {
+    const response = await axios.post(`${BACKEND_URL}/api/v1/space`, {
+      "name": "Test",
+      "dimensions": "100x200",
+    }, {
+      headers: {
+        authorization: `Bearer ${userToken}`
+      }
+    })
+
+    const deleteRespose = await axios.delete(`${BACKEND_URL}/api/v1/space/${response.data.spaceId}`, {
+      headers: {
+        authorization: `Bearer ${adminToken}`
+      }
+    })
+
+    expect(deleteRespose.statusCode).toBe(400);
+  })
+
+  //get my existing spaces
 })
 
 
