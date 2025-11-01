@@ -1,13 +1,16 @@
 {
-  "name": "db",
+  "name": "@repo/db",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "exports": {
-    "./client": "./src/*"
+    ".": "./dist/index.js",
+    "./*": "./dist/*"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -b",
+    "dev": "tsc -b --watch"
   },
   "keywords": [],
   "author": "",
