@@ -6,6 +6,7 @@ import { adminRouter } from "./admin.js";
 export const router = Router();
 
 router.post("/signup", (req,res) => {
+    //check the user 
     res.json({
         message: "signup"
     })
