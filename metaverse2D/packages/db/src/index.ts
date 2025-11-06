@@ -1,3 +1,6 @@
-import {PrismaClient} from "@prisma/client"
+import type { PrismaClient } from "@prisma/client";
+import { PrismaClient as PrismaClientClass } from "@prisma/client";
 
-export default new PrismaClient();
+const client: PrismaClient = new PrismaClientClass();
+
+export default client;

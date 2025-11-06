@@ -4,7 +4,10 @@
   "main": "index.js",
   "type": "module",
   "exports": {
-    ".": "./dist/index.js",
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
     "./*": "./dist/*"
   },
   "scripts": {
@@ -19,7 +22,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "prisma": "^6.17.1"
+    "prisma": "^6.17.1",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@prisma/client": "^6.18.0"
