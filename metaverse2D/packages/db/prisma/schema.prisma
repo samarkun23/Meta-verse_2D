@@ -17,10 +17,10 @@ model User {
   id        String    @id   @unique   @default(cuid())
   username  String    @unique
   password  String    
-  avarId    String
+  avatarId    String
   role      Role
   spaces    Space[]
-  avatar    Avatar? @relation(fields: [avarId], references: [id])
+  avatar    Avatar? @relation(fields: [avatarId], references: [id])
 }
 
 model Space {
