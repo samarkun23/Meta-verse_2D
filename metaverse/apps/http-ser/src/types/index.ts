@@ -1,8 +1,8 @@
 import z, { email } from "zod"
-import { he } from "zod/locales"
 
 export const SignUpSchema = z.object({
     email: z.string().email().min(5),
+    username: z.string().min(3),
     password: z.string().min(8),
     type: z.enum(["user", "admin"])
 })
