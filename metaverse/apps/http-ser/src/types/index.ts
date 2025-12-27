@@ -1,15 +1,14 @@
 import z, { email } from "zod"
 
 export const SignUpSchema = z.object({
-    email: z.string().email().min(5),
     username: z.string().min(3),
-    password: z.string().min(8),
+    password: z.string().min(6),
     type: z.enum(["user", "admin"])
 })
 
 export const SignInSchema = z.object({
-    username: z.string().email(),
-    password: z.string().min(8)
+    username: z.string().min(3),
+    password: z.string().min(6)
 })
 
 export const UpdateMetadatSchema = z.object({
