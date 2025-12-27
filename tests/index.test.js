@@ -66,6 +66,7 @@ describe("Authenticaiton", () => {
     const password = '123456'
 
     const response = await axios.post(`${BACKEND_URL}/api/v1/authorization/signup`, {
+      username,
       password
     })
 
